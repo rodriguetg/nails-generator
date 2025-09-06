@@ -23,7 +23,8 @@ function App() {
     generateDesign,
     generateMultipleDesigns,
     removeDesign,
-    clearDesigns
+    clearDesigns,
+    addDesigns
   } = useNailGeneration();
 
   const {
@@ -54,10 +55,7 @@ function App() {
     try {
       const newDesigns = await generateTemplateDesigns(templatePrompts, selectedPlatforms);
       // Ajouter les designs générés à la galerie
-      newDesigns.forEach(design => {
-        // Les designs sont déjà ajoutés dans le service, 
-        // on pourrait implémenter une fonction pour les récupérer
-      });
+      addDesigns(newDesigns);
     } catch (error) {
       console.error('Erreur lors de la génération de template:', error);
     }

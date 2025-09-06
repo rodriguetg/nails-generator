@@ -127,6 +127,10 @@ export const useNailGeneration = () => {
     setGeneratedDesigns(prev => prev.filter(design => design.id !== id));
   }, []);
 
+  const addDesigns = useCallback((designs: NailDesign[]) => {
+    setGeneratedDesigns(prev => [...designs, ...prev]);
+  }, []);
+
   return {
     isGenerating,
     generatedDesigns,
@@ -136,6 +140,7 @@ export const useNailGeneration = () => {
     generateDesign,
     generateMultipleDesigns,
     clearDesigns,
-    removeDesign
+    removeDesign,
+    addDesigns
   };
 };
