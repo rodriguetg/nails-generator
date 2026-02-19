@@ -112,20 +112,24 @@ export const Footer: React.FC = () => {
             </div>
           </div>
           
-          {/* Crédit discret pour Pollination */}
-          <div className="text-center mt-4 pt-4 border-t border-gray-800">
-            <p className="text-xs text-gray-600">
-              Générations d'images alimentées par{' '}
-              <a 
-                href="https://pollinations.ai" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="text-gray-500 hover:text-pink-400 transition-colors inline-flex items-center gap-1"
-              >
-                Pollination AI
-                <ExternalLink size={10} />
-              </a>
-            </p>
+          {/* Crédit Pollinations */}
+          <div className="flex justify-center mt-4 pt-4 border-t border-gray-800">
+            <a
+              href="https://pollinations.ai"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-gray-800/50 hover:bg-gray-700/50 border border-gray-700 rounded-full transition-all duration-300 group"
+            >
+              <img
+                src="https://pollinations.ai/favicon.ico"
+                alt="Pollinations.ai"
+                className="w-4 h-4"
+              />
+              <span className="text-sm text-gray-400 group-hover:text-white transition-colors">
+                Powered by pollinations.ai
+              </span>
+              <ExternalLink size={12} className="text-gray-500 group-hover:text-pink-400 transition-colors" />
+            </a>
           </div>
         </div>
 
