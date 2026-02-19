@@ -31,13 +31,13 @@ export const Footer: React.FC = () => {
                   <span className="text-sm font-medium text-gray-300">Créé par</span>
                 </div>
                 <div className="flex items-center justify-center md:justify-start gap-3">
-                  <span className="text-lg font-bold text-white">Rodrigue Gbadou</span>
+                  <span className="text-lg font-bold text-white">Rodriguetg</span>
                   <a 
                     href="https://github.com/rodriguetg" 
                     target="_blank" 
                     rel="noopener noreferrer"
                     className="p-2 bg-gray-700 hover:bg-gray-600 rounded-full transition-all duration-300 group"
-                    title="GitHub de Rodrigue Gbadou"
+                    title="GitHub de Rodriguetg"
                   >
                     <Github size={16} className="text-gray-400 group-hover:text-white" />
                   </a>
@@ -104,11 +104,11 @@ export const Footer: React.FC = () => {
               <span>Développé avec</span>
               <Heart size={16} className="text-red-400 animate-pulse" />
               <span>par</span>
-              <span className="font-semibold text-white">Rodrigue Gbadou</span>
+              <span className="font-semibold text-white">Rodriguetg</span>
               <span>en utilisant React & TypeScript</span>
             </div>
             <div className="text-gray-500 text-sm">
-              © 2025 Nail Art Generator. Tous droits réservés.
+              © {new Date().getFullYear()} Nail Art Generator. Tous droits réservés.
             </div>
           </div>
           

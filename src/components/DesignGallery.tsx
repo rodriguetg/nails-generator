@@ -18,13 +18,13 @@ export const DesignGallery: React.FC<DesignGalleryProps> = ({ designs, onRemove 
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      
+
       // Nom de fichier avec plateforme et dimensions
-      const platformInfo = design.platform 
+      const platformInfo = design.platform
         ? `_${design.platform.name.replace(/\s+/g, '-')}_${design.dimensions?.width}x${design.dimensions?.height}`
         : '';
       a.download = `nail-design-${design.id}${platformInfo}.png`;
-      
+
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
@@ -132,14 +132,14 @@ export const DesignGallery: React.FC<DesignGalleryProps> = ({ designs, onRemove 
             <p className="text-gray-600">{designs.length} création(s) générée(s)</p>
           </div>
         </div>
-        
+
         {/* Badge compteur */}
         <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-pink-100 to-purple-100 rounded-full">
           <Sparkles size={16} className="text-pink-500" />
           <span className="text-sm font-semibold text-gray-700">{designs.length} designs</span>
         </div>
       </div>
-      
+
       {/* Grille des designs */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {designs.map((design, index) => (
@@ -173,10 +173,9 @@ export const DesignGallery: React.FC<DesignGalleryProps> = ({ designs, onRemove 
                   loading="lazy"
                   onError={() => handleImageError(design.id)}
                   onLoad={() => handleImageLoad(design.id)}
-                  crossOrigin="anonymous"
                 />
               )}
-              
+
               {/* Badge plateforme */}
               {design.platform && (
                 <div className={`absolute top-4 right-4 px-2 py-1 text-xs font-bold rounded-full ${getPlatformBadgeColor(design.platform.id)}`}>
@@ -186,7 +185,7 @@ export const DesignGallery: React.FC<DesignGalleryProps> = ({ designs, onRemove 
                   </div>
                 </div>
               )}
-              
+
               {/* Overlay avec actions */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300">
                 <div className="absolute bottom-4 left-4 right-4 flex justify-between items-end">
@@ -213,7 +212,7 @@ export const DesignGallery: React.FC<DesignGalleryProps> = ({ designs, onRemove 
                       <Trash2 size={18} className="text-white" />
                     </button>
                   </div>
-                  
+
                   {/* Badge nouveau */}
                   {index < 4 && (
                     <div className="px-2 py-1 bg-yellow-400 text-yellow-900 text-xs font-bold rounded-full">
@@ -228,13 +227,13 @@ export const DesignGallery: React.FC<DesignGalleryProps> = ({ designs, onRemove 
                 {index + 1}
               </div>
             </div>
-            
+
             {/* Contenu */}
             <div className="p-5">
               <p className="text-gray-700 text-sm mb-4 line-clamp-3 leading-relaxed">
                 {design.prompt}
               </p>
-              
+
               {/* Info plateforme et dimensions */}
               {design.platform && design.dimensions && (
                 <div className="mb-3 p-2 bg-gray-50 rounded-lg">
@@ -247,22 +246,21 @@ export const DesignGallery: React.FC<DesignGalleryProps> = ({ designs, onRemove 
                   </div>
                 </div>
               )}
-              
+
               <div className="flex items-center justify-between">
                 <div className="flex items-center text-xs text-gray-500">
                   <Calendar size={14} className="mr-2" />
                   {formatDate(design.createdAt)}
                 </div>
-                
+
                 {/* Actions rapides */}
                 <div className="flex gap-1">
                   <button
                     onClick={() => copyPrompt(design.prompt, design.id)}
-                    className={`p-2 rounded-lg transition-all duration-300 ${
-                      copiedPrompt === design.id
+                    className={`p-2 rounded-lg transition-all duration-300 ${copiedPrompt === design.id
                         ? 'text-green-500 bg-green-50'
                         : 'text-gray-400 hover:text-purple-500 hover:bg-purple-50'
-                    }`}
+                      }`}
                     title="Copier le prompt"
                   >
                     <Copy size={14} />

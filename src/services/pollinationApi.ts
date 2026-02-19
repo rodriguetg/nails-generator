@@ -1,7 +1,7 @@
-import axios from 'axios';
-import { GenerationRequest, ApiResponse, SocialPlatform, ImageDimensions } from '../types';
+import { GenerationRequest, ApiResponse, SocialPlatform } from '../types';
 
-const API_BASE_URL = 'https://image.pollinations.ai/prompt';
+const API_BASE_URL = 'https://gen.pollinations.ai/image';
+const API_KEY = import.meta.env.VITE_POLLINATION_API_KEY || '';
 
 class PollinationService {
   // Plateformes sociales supportées
@@ -52,67 +52,72 @@ class PollinationService {
     ];
   }
 
-  private async generateImage(request: GenerationRequest): Promise<string> {
-    try {
-      // Construction du prompt optimisé pour nail art
-      let enhancedPrompt = `nail art design, ${request.prompt}, professional manicure, detailed nail polish, high quality, beautiful nails, studio lighting`;
-      
-      // Ajout d'optimisations selon la plateforme
-      if (request.platform) {
-        switch (request.platform.id) {
-          case 'pinterest':
-            enhancedPrompt += ', pinterest-style, aesthetic, trendy, lifestyle photography';
-            break;
-          case 'instagram-post':
-          case 'instagram-story':
-            enhancedPrompt += ', instagram-worthy, social media ready, influencer style';
-            break;
-          case 'facebook-post':
-          case 'facebook-story':
-            enhancedPrompt += ', shareable, eye-catching, social media optimized';
-            break;
-          case 'tiktok':
-            enhancedPrompt += ', trending, viral-worthy, gen-z aesthetic';
-            break;
-        }
-      }
-      
-      // Construction des paramètres avec dimensions
-      const params = new URLSearchParams({
-        width: request.platform?.dimensions.width.toString() || '512',
-        height: request.platform?.dimensions.height.toString() || '512',
-        model: 'flux',
-        enhance: 'true',
-        nologo: 'true',
-        private: 'false'
-      });
+  private buildImageUrl(request: GenerationRequest): string {
+    // Construction du prompt optimisé pour nail art
+    let enhancedPrompt = `nail art design, ${request.prompt}, professional manicure, high quality, studio lighting`;
 
-      // URL finale avec le prompt encodé
-      const imageUrl = `${API_BASE_URL}/${encodeURIComponent(enhancedPrompt)}?${params.toString()}`;
-      
-      console.log('URL générée:', imageUrl);
-      console.log('Plateforme:', request.platform?.name);
-      console.log('Dimensions:', request.platform?.dimensions);
-      
-      return imageUrl;
-    } catch (error) {
-      console.error('Erreur lors de la génération:', error);
-      throw new Error('Impossible de générer l\'image. Veuillez réessayer.');
+    // Ajout d'optimisations selon la plateforme
+    if (request.platform) {
+      switch (request.platform.id) {
+        case 'pinterest':
+          enhancedPrompt += ', aesthetic, trendy';
+          break;
+        case 'instagram-post':
+        case 'instagram-story':
+          enhancedPrompt += ', instagram-worthy, influencer style';
+          break;
+        case 'facebook-post':
+        case 'facebook-story':
+          enhancedPrompt += ', eye-catching';
+          break;
+        case 'tiktok':
+          enhancedPrompt += ', trending, gen-z aesthetic';
+          break;
+      }
     }
+
+    // Paramètres
+    const width = request.platform?.dimensions.width || 1024;
+    const height = request.platform?.dimensions.height || 1024;
+    const seed = Math.floor(Math.random() * 1000000);
+
+    // Construction de l'URL - ne PAS utiliser encodeURIComponent pour garder les virgules lisibles
+    // Pollinations accepte les espaces comme %20 dans le path
+    const encodedPrompt = enhancedPrompt.replace(/ /g, '%20');
+
+    // Construire l'URL avec la clé API
+    let url = `${API_BASE_URL}/${encodedPrompt}?width=${width}&height=${height}&seed=${seed}&nologo=true&model=flux`;
+    if (API_KEY) {
+      url += `&key=${API_KEY}`;
+    }
+
+    console.log('URL générée:', url);
+    return url;
   }
 
   async generateNailDesign(request: GenerationRequest): Promise<ApiResponse> {
     try {
-      const imageUrl = await this.generateImage(request);
-      
+      const imageUrl = this.buildImageUrl(request);
+      const id = Date.now().toString() + Math.random().toString(36).substr(2, 9);
+
+      // Fetch l'image pour attendre que Pollinations la génère réellement
+      const response = await fetch(imageUrl);
+      if (!response.ok) {
+        throw new Error(`Erreur API: ${response.status} ${response.statusText}`);
+      }
+
+      const blob = await response.blob();
+      const blobUrl = URL.createObjectURL(blob);
+
       return {
         success: true,
         data: {
-          imageUrl,
-          id: Date.now().toString() + Math.random().toString(36).substr(2, 9)
+          imageUrl: blobUrl,
+          id
         }
       };
     } catch (error) {
+      console.error('Erreur génération:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Erreur inconnue'
@@ -141,7 +146,7 @@ class PollinationService {
 
   // Prompts spécialisés par plateforme
   getPlatformSpecificPrompts(platformId: string): string[] {
-    const basePrompts = {
+    const basePrompts: Record<string, string[]> = {
       'pinterest': [
         'aesthetic minimalist nail art for wedding inspiration',
         'cozy autumn nail designs with warm earth tones',
